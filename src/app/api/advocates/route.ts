@@ -8,9 +8,12 @@ export async function GET(request: Request) {
   }
   const { searchParams } = new URL(request.url);
   const q = searchParams.get("q")?.toLowerCase() || "";
+  const page = parseInt(searchParams.get("page") || "1", 10);
+  const limit = parseInt(searchParams.get("limit") || "10", 10);
+  const offset = (page - 1) * limit;
 
   if (q === "") {
-    const data = await db.select().from(advocates);
+    const data = await db.select().from(advocates).limit(limit).offset(offset);
     return Response.json({ data });
   }
 
@@ -26,7 +29,9 @@ export async function GET(request: Request) {
         sql`advocates.phone_number::text ILIKE ${`%${q}%`}`,
         sql`advocates.specialties::text ILIKE ${`%${q}%`}`
       )
-    );
+    )
+    .limit(limit)
+    .offset(offset);
 
   return Response.json({ data });
 }

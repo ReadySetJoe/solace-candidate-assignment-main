@@ -12,7 +12,7 @@ export default function AdvocateTable({
         <tr>
           <th>Name</th>
           <th>City</th>
-          <th>Specialties</th>
+          <th className="md:table-cell hidden">Specialties</th>
           <th>Years of Experience</th>
           <th>Phone Number</th>
         </tr>

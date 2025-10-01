@@ -10,7 +10,7 @@ export default function AdvocateRow({ advocate }: { advocate: Advocate }) {
         {advocate.firstName} {advocate.lastName}, {advocate.degree}
       </td>
       <td className="p-2">{advocate.city}</td>
-      <td className="p-2">
+      <td className="p-2 md:table-cell hidden">
         {advocate.specialties
           .slice(0, expandSpecialties ? undefined : 3)
           .map(s => (
