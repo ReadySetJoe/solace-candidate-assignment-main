@@ -1,17 +1,25 @@
 "use client";
 
+import AdvocateTable from "@/components/AdvocateTable";
+import { Advocate } from "@/types/advocate";
 import { useEffect, useState } from "react";
 
 export default function Home() {
-  const [advocates, setAdvocates] = useState([]);
+  const [advocates, setAdvocates] = useState<Advocate[]>([]);
   const [search, setSearch] = useState("");
 
   useEffect(() => {
-    fetch(`/api/advocates?${new URLSearchParams({ q: search })}`).then(res => {
-      res.json().then(jsonRes => {
-        setAdvocates(jsonRes.data);
-      });
-    });
+    const fetchAdvocates = async () => {
+      const params = new URLSearchParams();
+      if (search) {
+        params.append("q", search);
+      }
+      const res = await fetch(`/api/advocates?${params.toString()}`);
+      const json = await res.json();
+      setAdvocates(json.data);
+    };
+
+    fetchAdvocates();
   }, [search]);
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -20,53 +28,26 @@ export default function Home() {
   };
 
   return (
-    <main style={{ margin: "24px" }}>
+    <main className="container mx-auto p-4">
       <h1>Solace Advocates</h1>
-      <br />
-      <br />
       <div>
-        <p>Search</p>
         <input
           className="border p-1"
           type="text"
           value={search}
           onChange={onChange}
+          placeholder="Search"
         />
-        <button onClick={() => setSearch("")} className="border p-1">
-          X
+        <button
+          onClick={() => setSearch("")}
+          className={"border p-1 ml-2"}
+          disabled={search === ""}
+        >
+          Reset
         </button>
       </div>
 
-      <table>
-        <thead>
-          <th>First Name</th>
-          <th>Last Name</th>
-          <th>City</th>
-          <th>Degree</th>
-          <th>Specialties</th>
-          <th>Years of Experience</th>
-          <th>Phone Number</th>
-        </thead>
-        <tbody>
-          {advocates.map(advocate => {
-            return (
-              <tr key={advocate.id}>
-                <td>{advocate.firstName}</td>
-                <td>{advocate.lastName}</td>
-                <td>{advocate.city}</td>
-                <td>{advocate.degree}</td>
-                <td>
-                  {advocate.specialties.map(s => (
-                    <div key={s}>{s}</div>
-                  ))}
-                </td>
-                <td>{advocate.yearsOfExperience}</td>
-                <td>{advocate.phoneNumber}</td>
-              </tr>
-            );
-          })}
-        </tbody>
-      </table>
+      <AdvocateTable advocates={advocates} />
     </main>
   );
 }
