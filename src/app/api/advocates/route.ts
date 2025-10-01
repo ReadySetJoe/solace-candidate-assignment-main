@@ -24,7 +24,7 @@ export async function GET(request: Request) {
         ilike(advocates.city, `%${q}%`),
         ilike(advocates.degree, `%${q}%`),
         sql`advocates.phone_number::text ILIKE ${`%${q}%`}`,
-        sql`advocates.payload::text ILIKE ${`%${q}%`}`
+        sql`advocates.specialties::text ILIKE ${`%${q}%`}`
       )
     );
 
